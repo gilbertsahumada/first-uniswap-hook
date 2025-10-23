@@ -17,7 +17,7 @@ contract PointsHook is BaseHook, ERC1155 {
     constructor(IPoolManager _manager) BaseHook(_manager) {}
 
     function getHookPermissions() public pure override returns (Hooks.Permissions memory) {
-        Hooks.Permissions({
+        return Hooks.Permissions({
             beforeInitialize: false,
             afterInitialize: false,
             beforeAddLiquidity: false,
