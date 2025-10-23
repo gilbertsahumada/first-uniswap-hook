@@ -1,0 +1,12 @@
+{
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.compileUsingRemoteVersion": "v0.8.26+commit.8a97fa4e",
+  "solidity.remappings": [
+    "@v4-core/=lib/v4-core/src/",
+    "v4-core/=lib/v4-core/src/",
+    "v4-periphery/=lib/v4-periphery/src/",
+    "solmate/=lib/solmate/src/"
+  ],
+  "solidity.remappingsWindows": [],
+  "editor.defaultFormatter": "JuanBlanco.solidity"
+}
