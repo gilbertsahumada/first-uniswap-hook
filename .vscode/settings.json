@@ -8,5 +8,8 @@
     "solmate/=lib/solmate/src/"
   ],
   "solidity.remappingsWindows": [],
-  "editor.defaultFormatter": "JuanBlanco.solidity"
+  "editor.defaultFormatter": "JuanBlanco.solidity",
+  "[solidity]": {
+    "editor.defaultFormatter": "NomicFoundation.hardhat-solidity"
+  }
 }
