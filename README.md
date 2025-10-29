@@ -1,66 +1,41 @@
-## Foundry
+## Points Hook
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+Points Hook is a Foundry-based playground that experiments with Uniswap v4 hooks. The main contract (`src/PointsHook.sol`) mints ERC-1155 points whenever a swap routes ETH into the paired token.
 
-Foundry consists of:
+### Mainnet Deployment
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+- Hook address: `0x6Fc3e85125171ECf8748A6ba834EA494C602c040`
+- Deployment txn: `0xb57d24c3824cc397d94400fc6fea2342a847a1a2ab5cab88730faaaefe574a12`
+- Deployment script: `script/DeployHook.s.sol`
 
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
+### Getting Started
 
 ```shell
-$ forge build
+forge install
+forge build
+forge test
 ```
 
-### Test
+Set up the required environment variables before deploying or running scripts:
 
 ```shell
-$ forge test
+export POOL_MANAGER_ADDRESS=<pool-manager-address>
+export PRIVATE_KEY=<deployer-private-key>
+export MAINNET_RPC_URL=<https-endpoint>
+export POOL_MANAGER_ADDRESS=0xE03A1074c86CFeDd5C142C4F04F1a1536e203543
 ```
 
-### Format
+### Deploying
 
 ```shell
-$ forge fmt
+forge script script/DeployHook.s.sol \
+	--rpc-url $MAINNET_RPC_URL \
+	--chain-id 1 \
+	--broadcast
 ```
 
-### Gas Snapshots
+### Tooling
 
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+- Forge for compilation, testing, and deployment (`forge --help`)
+- Anvil for a local Ethereum node (`anvil`)
+- Cast for chain interactions (`cast --help`)
