@@ -120,7 +120,32 @@ contract FirstHook is BaseHook {
         BalanceDelta delta,
         bytes calldata
     ) internal override returns (bytes4, int128) {
+        bool specifiedIsToken0 = (params.amountSpecified < 0 == params.zeroForOne);
+        Currency unspecifiedCurrency = specifiedIsToken0 ? key.currency1 : key.currency0;
+        if(Currency.unwrap(unspecifiedCurrency) != Currency.unwrap(reinvestCurrency)) return (this.afterSwap.selector, 0);
 
+        int128 swapAmount = specifiedIsToken0 ? delta.amount1() : delta.amount0();
+        if(swapAmount == 0) return (this.afterSwap.selector, 0);
+        if(swapAmount < 0) swapAmount = -swapAmount;
+
+        uint256 gross = uint256(int256(swapAmount));
+        uint256 reinvestAmount = gross * reinvestBps / BPS_DENOMINATOR;
+        if(reinvestAmount == 0) return (this.afterSwap.selector, 0);
+
+        poolManager.take(reinvestCurrency, address(this), reinvestAmount);
+        _supplyToAave(reinvestAmount);
+
+        emit Reinvested(reinvestAmount, reinvestBeneficiary);
+        return (this.afterSwap.selector, 0);
+    }
+
+    function _supplyToAave(uint256 amount) internal {
+        address asset = Currency.unwrap(reinvestCurrency);
+        IERC20Minimal token = IERC20Minimal(asset);
+        if(token.allowance(address(this), address(aavePool)) < amount) {
+            token.approve(address(aavePool), type(uint256).max);
+        }
+        aavePool.supply(asset, amount, reinvestBeneficiary, referralCode);
     }
 
     function _setReinvestBps(uint256 _newBps) internal {
