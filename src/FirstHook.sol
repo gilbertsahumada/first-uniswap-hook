@@ -7,6 +7,7 @@ import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {PoolKey} from "v4-core/types/PoolKey.sol";
 import {SwapParams} from "v4-core/types/PoolOperation.sol";
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import {BalanceDelta} from "v4-core/types/BalanceDelta.sol";
 import {Currency} from "v4-core/types/Currency.sol";
 import {IERC20Minimal} from "v4-core/interfaces/external/IERC20Minimal.sol";
 import {SafeCast} from "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -19,7 +20,7 @@ interface IAvePool {
         uint16 referralCode
     ) external;
 
-    function withdraw(address asset, uint256 amount, address to) external;
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 }
 
 contract FirstHook is BaseHook {
@@ -88,9 +89,48 @@ contract FirstHook is BaseHook {
             });
     }
 
+    function setReinvestBps(uint256 _newBps) external onlyOwner {
+        _setReinvestBps(_newBps);
+    }
+
+    function setReinvestBeneficiary(
+        address _newBeneficiary
+    ) external onlyOwner {
+        reinvestBeneficiary = _newBeneficiary;
+        emit BeneficiaryUpdated(_newBeneficiary);
+    }
+
+    function withdrawFromAave(uint256 amount, address to
+    ) external onlyOwner returns (uint256 withdrawn) {
+        withdrawn = aavePool.withdraw(
+            Currency.unwrap(reinvestCurrency),
+            amount,
+            to
+        );
+    }
+
+    function rescueToken(address token, address to, uint256 amount) external onlyOwner {
+        IERC20Minimal(token).transfer(to, amount);
+    }
+
+    function _afterSwap(
+        address,
+        PoolKey calldata key,
+        SwapParams calldata params,
+        BalanceDelta delta,
+        bytes calldata
+    ) internal override returns (bytes4, int128) {
+
+    }
+
     function _setReinvestBps(uint256 _newBps) internal {
         if (_newBps > BPS_DENOMINATOR) revert InvalidBps();
         reinvestBps = _newBps;
         emit ReinvestedUpdated(_newBps);
+    }
+
+    modifier onlyOwner() {
+        if (msg.sender != owner) revert OnlyOwner();
+        _;
     }
 }
