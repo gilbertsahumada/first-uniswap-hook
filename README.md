@@ -34,6 +34,17 @@ forge script script/DeployHook.s.sol \
 	--broadcast
 ```
 
+### Chain Ids
+
+| Network           | Chain ID |
+| ----------------- | -------- |
+| Ethereum Mainnet  | 1        |
+| Sepolia           | 11155111 |
+| Avalanche         | 43114    |
+| Avalanche Fuji    | 43113    |
+
+
+
 ### Tooling
 
 - Forge for compilation, testing, and deployment (`forge --help`)
