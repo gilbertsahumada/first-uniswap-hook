@@ -55,6 +55,7 @@ contract FirstHook is BaseHook {
     ) BaseHook(_manager) {
         if (_reinvestCurrency.isAddressZero()) revert InvalidCurrency();
         if (_reinvestBps > 10_000) revert InvalidBps();
+        owner = msg.sender;
         aavePool = _aavePool;
         reinvestCurrency = _reinvestCurrency;
         referralCode = _referralCode;
